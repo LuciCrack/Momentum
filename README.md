@@ -36,6 +36,6 @@ I’m still learning, so please don’t expect anything super polished.
 This is my first game jam entry, and I’m just having fun and learning along the way!
 
 Any suggestions and comments are super appreciated.
-I hope you enjoy!!
+I hope you enjoy this game!!
 
 
