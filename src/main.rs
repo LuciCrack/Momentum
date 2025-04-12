@@ -11,7 +11,7 @@ fn main() {
         // Pretty self explainatory
         // Run app with default plugins and physics from avian3d
         .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
-        .insert_resource(Gravity(Vec3::NEG_Y * 38.0))// Set gravity resource to - **
+        .insert_resource(Gravity(Vec3::NEG_Y * 30.0))// Set gravity resource to - **
         .insert_resource(Time::<Physics>::default()) // Insert time resource (physics only)
         .insert_resource(DashCooldown {
             timer: Timer::from_seconds(1.0, TimerMode::Once),
@@ -34,7 +34,7 @@ fn main() {
         .run();
 }
 
-// Set up the player and other structures such as floor and a cube
+// Set up the player and camera
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -75,29 +75,41 @@ fn setup(
     ));
 
     commands.spawn((
-        Mesh3d(player_mesh),
-        MeshMaterial3d(player_material),
-        Transform::from_xyz(0.0, 1.5, 0.0),
-        RigidBody::Dynamic,
-        Collider::capsule(0.6, 0.6),
-        Friction::new(0.4),
-        LinearDamping(0.2),
-        AngularDamping(2.0),
-        Visibility::Visible,
-        CameraSensitivity::default(),
-        Player,
+         Mesh3d(player_mesh),
+         MeshMaterial3d(player_material),
+         Transform::from_xyz(0.0, 10.0, 0.0),
+         RigidBody::Dynamic,
+         Collider::capsule(0.6, 0.5),
+         Friction::new(0.4),
+         LinearDamping(0.2),
+         AngularDamping(2.0),
+         Visibility::Visible,
+         CameraSensitivity::default(),
+         Player,
     ))
     .with_children(|parent| {
-      parent.spawn((
-          Camera3d::default(),
-          Transform::from_xyz(0.0, 0.9, 0.0),
-          Projection::from(PerspectiveProjection {
-              fov: 100.0_f32.to_radians(),
-              ..default()
-          }),
-          PlayerCamera,
-      ));
+        parent.spawn((
+            Camera3d::default(),
+            Transform::from_xyz(0.0, 0.9, 0.0),
+            Projection::from(PerspectiveProjection {
+                fov: 100.0_f32.to_radians(),
+                ..default()
+            }),
+            PlayerCamera,
+        ));
     });
+}
+
+// setup lights 
+fn spawn_lights(mut commands: Commands) {
+    commands.spawn((
+        PointLight {
+            color: Color::from(tailwind::ROSE_300),
+            shadows_enabled: true,
+            ..default()
+        },
+        Transform::from_xyz(-2.0, 7.0, -0.75),
+    ));
 }
 
 // Function to make dissapear the cursor when playing
@@ -111,7 +123,6 @@ fn lock_cursor(
             window.cursor_options.visible = false;
         }
     }
-    
 }
 
 // Appear cursor on Escape
@@ -135,18 +146,6 @@ fn unpause(mut time: ResMut<Time<Physics>>) {
     time.unpause();
 }
 
-// setup lights 
-fn spawn_lights(mut commands: Commands) {
-    commands.spawn((
-        PointLight {
-            color: Color::from(tailwind::ROSE_300),
-            shadows_enabled: true,
-            ..default()
-        },
-        Transform::from_xyz(-2.0, 7.0, -0.75),
-    ));
-}
-
 // Handle input game state independent
 fn input(
     keyboard_input: Res<ButtonInput<KeyCode>>,
@@ -167,13 +166,11 @@ fn jumping(
     mut entities: Query<(Entity, &mut LinearVelocity), With<Player>>,
     mut collision_event_reader: EventReader<Collision>,
 ) {
-    for key in keyboard_input.get_pressed() { // Get direction input 
-        if key == &KeyCode::Space {
-            for (entity, mut linear_vel) in entities.iter_mut() {
-                let touching_ground = touching_ground(&mut collision_event_reader, entity, &transforms);
-                if touching_ground {
-                    linear_vel.y = 12.0;
-                }
+    if keyboard_input.just_pressed(KeyCode::Space) {
+        for (entity, mut linear_vel) in entities.iter_mut() {
+            let touching_ground = touching_ground(&mut collision_event_reader, entity, &transforms);
+            if touching_ground {
+                linear_vel.y = 12.0;
             }
         }
     }

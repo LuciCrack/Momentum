@@ -24,10 +24,4 @@ This is my first game jam entry, and I’m just having fun and learning along th
 Any suggestions and comments are super appreciated.
 I hope you enjoy!!
 
-ATTRIBUTIONS
 
-Testing level
-
-* "Parkour" (https://skfb.ly/oLUAO) by kprzl is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
-
-* Original model has not been modified.
