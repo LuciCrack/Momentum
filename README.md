@@ -25,7 +25,8 @@ You should be able to play by running the executable "Momentum"
 or you can run it using Rust and Cargo:
 * You must have Rust nightly with Cargo installed (https://doc.rust-lang.org/book/ch01-01-installation.html)
 * Download the source code from GitHub (https://github.com/LuciCrack/Momentum)
-* Run using "cargo run"
+* Run using "cargo run --release"
+* It will take some time to compile all libraries
 
 Contact Me if you need help running or just want to talk to me: "lupici" in discord
 
